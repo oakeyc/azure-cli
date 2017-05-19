@@ -138,6 +138,23 @@ class LongRunningOperation(object):  # pylint: disable=too-few-public-methods
         from msrest.exceptions import ClientException
         logger.info("Starting long running operation '%s'", self.start_msg)
         correlation_message = ''
+
+
+        # pylint: disable=protected-access
+        correlation_id = json.loads(
+            poller._response.__dict__['_content'])['properties']['correlationId']
+        # execute('az monitor activity-log list --correlation-id {}'.format(correlation_id))
+        """
+        the ^^ above will output a large json, which I want:
+        ?[].authorization.action
+        ?[].authorization.scope
+        ?[].description
+        ?[].eventName
+        ?[].operationName.value
+        ?[].status.value
+        ?[].level
+        """
+
         while not poller.done():
             try:
                 # pylint: disable=protected-access
