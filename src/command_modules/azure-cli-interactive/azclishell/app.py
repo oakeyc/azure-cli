@@ -522,8 +522,6 @@ class Shell(object):
     def cli_execute(self, cmd):
         try:
             args = parse_quotes(cmd)
-            azlogging.configure_logging(args)
-
             azure_folder = get_config_dir()
             if not os.path.exists(azure_folder):
                 os.makedirs(azure_folder)
@@ -533,6 +531,7 @@ class Shell(object):
 
             config = Configuration()
             self.app.initialize(config)
+
             result = self.app.execute(args)
             self.last_exit = 0
             if result and result.result is not None:
@@ -544,6 +543,7 @@ class Shell(object):
                         self.app.configuration.output_format)
                     OutputProducer(formatter=formatter, file=sys.stdout).out(result)
                     self.last = result
+            azlogging.configure_logging(args)
 
         except Exception as ex:  # pylint: disable=broad-except
             self.last_exit = handle_exception(ex)
