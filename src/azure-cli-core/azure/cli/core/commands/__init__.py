@@ -141,9 +141,10 @@ class LongRunningOperation(object):  # pylint: disable=too-few-public-methods
 
 
         # pylint: disable=protected-access
-        correlation_id = json.loads(
-            poller._response.__dict__['_content'])['properties']['correlationId']
-        # execute('az monitor activity-log list --correlation-id {}'.format(correlation_id))
+        # correlation_id = json.loads(
+        #     poller._response.__dict__['_content'])['properties']['correlationId']
+        # import subprocess
+        # subprocess.call('az monitor activity-log list --correlation-id {} --query [].operationName.value'.format(correlation_id))
         """
         the ^^ above will output a large json, which I want:
         ?[].authorization.action
@@ -154,13 +155,17 @@ class LongRunningOperation(object):  # pylint: disable=too-few-public-methods
         ?[].status.value
         ?[].level
         """
-
         while not poller.done():
+
             try:
                 # pylint: disable=protected-access
                 correlation_id = json.loads(
                     poller._response.__dict__['_content'])['properties']['correlationId']
-
+                # like no wait this and send the lower command and that send whats on the wire
+                # probably a table format would work well
+                query = 'az monitor activity-log list --correlation-id {} --query [].operationName.value'.format(correlation_id)
+                print(correlation_id)
+                subprocess.Popen(query, shell=True).communicate()
                 correlation_message = 'Correlation ID: {}'.format(correlation_id)
             except:  # pylint: disable=bare-except
                 pass
