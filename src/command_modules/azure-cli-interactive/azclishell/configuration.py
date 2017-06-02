@@ -17,7 +17,8 @@ SELECT_SYMBOL = {
     'example': '::',
     'exit_code': '$',
     'scope': '%%',
-    'unscope': '..'
+    'unscope': '..',
+    'script': '<>'
 }
 
 GESTURE_INFO = {
@@ -28,11 +29,11 @@ GESTURE_INFO = {
     SELECT_SYMBOL['scope'] + '[cmd]': "set a scope, and scopes can be chained with spaces",
     SELECT_SYMBOL['scope'] + ' ' + SELECT_SYMBOL['unscope']: "go back a scope",
     "Ctrl+N": "Scroll down the documentation",
-    "Ctrl+Y": "Scroll up the documentation"
+    "Ctrl+Y": "Scroll up the documentation",
+    SELECT_SYMBOL['script'] + "[name]": "start/end scripting mode"
 }
 
 CONFIG_FILE_NAME = 'shell-config'
-
 GESTURE_LENGTH = 20
 
 
@@ -154,3 +155,5 @@ def ask_user_for_telemetry():
 
 
 CONFIGURATION = Configuration()
+
+SCRIPT_PATH = os.path.join(get_config_dir(), 'scripts')

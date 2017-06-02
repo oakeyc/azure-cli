@@ -32,7 +32,7 @@ from azclishell.frequency_heuristic import DISPLAY_TIME
 from azclishell.gather_commands import add_random_new_lines
 from azclishell.key_bindings import registry, get_section, sub_section
 from azclishell.layout import create_layout, create_tutorial_layout, set_scope
-from azclishell.progress import get_progress_message, progress_view
+from azclishell.progress import progress_view
 from azclishell.telemetry import TC as telemetry
 from azclishell.util import get_window_dim, parse_quotes, get_os_clear_screen_word
 
@@ -147,6 +147,8 @@ class Shell(object):
         self.threads = []
         self.curr_thread = None
         self.spin_val = -1
+        self.script = None
+        self.script_name = None
 
     @property
     def cli(self):
@@ -456,6 +458,20 @@ class Shell(object):
                 print(meaning + ": " + str(self.last_exit))
                 continue_flag = True
                 telemetry.track_ssg('exit code', '')
+
+            elif text[0] == SELECT_SYMBOL['script']:
+                telemetry.track_ssg('script', '')
+                if self.script is None:  # start script capturing
+                    if len(text) > 1:
+                        self.script_name = text[1]
+                    self.script = []
+                else:  # end script capturing
+                    script_path = azclishell.configuration.SCRIPT_PATH
+                    name = self.script_name if self.script_name else str(datetime.datetime.now())
+                    if not os.path.exists(script_path):
+                        os.makedirs(script_path)
+                    with open(os.path.join(script_path, name), 'w') as script_path:
+                        script_path.write(self.script)
 
             elif text[0] == SELECT_SYMBOL['query']:  # query previous output
                 continue_flag = self.handle_jmespath_query(text, continue_flag)
