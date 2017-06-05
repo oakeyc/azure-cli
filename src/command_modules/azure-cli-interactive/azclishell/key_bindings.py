@@ -28,6 +28,7 @@ PROMPTING = False
 EXAMPLE_REPL = False
 SHOW_DEFAULT = False
 SYMBOLS = False
+VERBOSE = False
 
 
 # pylint: disable=too-few-public-methods
@@ -118,6 +119,15 @@ def toggle_symbols(event):
     SYMBOLS = not SYMBOLS
 
 
+@registry.add_binding(Keys.F4, eager=True)
+def toggle_verbose(event):
+    """ shows the symbol bindings"""
+    global VERBOSE
+    telemetry.track_key('F4')
+
+    VERBOSE = not VERBOSE
+
+
 def get_symbols():
     """ gets the symbols """
     return SYMBOLS
@@ -126,6 +136,11 @@ def get_symbols():
 def get_show_default():
     """ gets the defaults """
     return SHOW_DEFAULT
+
+
+def get_verbose():
+    ''' gets verbose '''
+    return VERBOSE
 
 
 def format_response(response):

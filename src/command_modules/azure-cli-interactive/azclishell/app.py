@@ -222,6 +222,7 @@ class Shell(object):
             " [F1]Layout",
             "[F2]Defaults",
             "[F3]Keys",
+            '[F4]Verbose'
             "[Ctrl+D]Quit",
             tool_val
         ]
@@ -291,7 +292,8 @@ class Shell(object):
             'example_line': Buffer(is_multiline=True),
             'default_values': Buffer(),
             'symbols': Buffer(),
-            'progress': Buffer(is_multiline=False)
+            'progress': Buffer(is_multiline=False),
+            'verbose': Buffer()
         }
 
         writing_buffer = Buffer(
@@ -678,6 +680,8 @@ class ProgressViewThread(threading.Thread):
         try:
             while True:
                 if self.func(self.arg):
+                    self.arg.cli.buffers['verbose'].reset(
+                        initial_document=Document())
                     time.sleep(4)
                     break
                 time.sleep(.25)
