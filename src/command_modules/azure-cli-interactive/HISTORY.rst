@@ -3,6 +3,10 @@
 Release History
 ===============
 
+0.3.4 (unreleased)
+++++++++++++++++++
+* verbose panel
+
 0.3.3 (2017-05-30)
 ++++++++++++++++++
 * --progress flag
