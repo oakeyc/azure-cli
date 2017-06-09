@@ -21,8 +21,8 @@ from pygments.token import Token
 from pygments.lexer import Lexer as PygLex
 
 import azclishell.configuration
-from azclishell.key_bindings import get_show_default, get_symbols
-from azclishell.progress import get_progress_message, get_done, get_verbose
+from azclishell.key_bindings import get_show_default, get_symbols, get_verbose
+from azclishell.progress import get_progress_message, get_done
 
 MAX_COMPLETION = 16
 DEFAULT_COMMAND = ""
