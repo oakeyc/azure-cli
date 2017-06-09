@@ -48,7 +48,7 @@ class CustomShellStreamHandler(logging.StreamHandler):
         return msg
 
 
-def configure_logging(argv):
+def shell_configure_logging(argv, stream):
     verbose_level = _determine_verbose_level(argv)
     log_level_config = CONSOLE_LOG_CONFIGS[verbose_level]
 
@@ -63,7 +63,7 @@ def configure_logging(argv):
     if root_logger.handlers and az_logger.handlers:
         # loggers already configured
         return
-    stream = six.StringIO()
+
     root_logger.addHandler(
         CustomShellStreamHandler(log_level_config['root'], CONSOLE_LOG_CONFIGS['root'], stream))
     az_logger.addHandler(

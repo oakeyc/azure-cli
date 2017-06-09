@@ -8,6 +8,7 @@ from __future__ import unicode_literals, print_function
 import json
 import math
 import os
+import six
 import subprocess
 import sys
 import datetime
@@ -33,6 +34,7 @@ from azclishell.gather_commands import add_random_new_lines
 from azclishell.key_bindings import registry, get_section, sub_section
 from azclishell.layout import create_layout, create_tutorial_layout, set_scope
 from azclishell.progress import get_progress_message, progress_view
+from azclishell.shell_logging import shell_configure_logging
 from azclishell.telemetry import TC as telemetry
 from azclishell.util import get_window_dim, parse_quotes, get_os_clear_screen_word
 
@@ -147,6 +149,7 @@ class Shell(object):
         self.threads = []
         self.curr_thread = None
         self.spin_val = -1
+        self.verbose_stream = six.StringIO()
 
     @property
     def cli(self):
@@ -551,7 +554,8 @@ class Shell(object):
 
         try:
             args = parse_quotes(cmd)
-            azlogging.configure_logging(args)
+            # azlogging.configure_logging(args)
+            self.verbose_stream = sys.stderr
 
             if len(args) > 0 and args[0] == 'feedback':
                 SHELL_CONFIGURATION.set_feedback('yes')
