@@ -18,7 +18,7 @@ SELECT_SYMBOL = {
     'exit_code': '$',
     'scope': '%%',
     'unscope': '..',
-    'script': '<>'
+    'script': '^^'
 }
 
 GESTURE_INFO = {
