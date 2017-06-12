@@ -461,17 +461,8 @@ class Shell(object):
 
             elif text[0] == SELECT_SYMBOL['script']:
                 telemetry.track_ssg('script', '')
-                if self.script is None:  # start script capturing
-                    if len(text) > 1:
-                        self.script_name = text[1]
-                    self.script = []
-                else:  # end script capturing
-                    script_path = azclishell.configuration.SCRIPT_PATH
-                    name = self.script_name if self.script_name else str(datetime.datetime.now())
-                    if not os.path.exists(script_path):
-                        os.makedirs(script_path)
-                    with open(os.path.join(script_path, name), 'w') as script_path:
-                        script_path.write(self.script)
+                self.handle_scripting(text)
+                continue_flag = True
 
             elif text[0] == SELECT_SYMBOL['query']:  # query previous output
                 continue_flag = self.handle_jmespath_query(text, continue_flag)
@@ -487,6 +478,21 @@ class Shell(object):
         continue_flag, cmd = self.handle_scoping_input(continue_flag, cmd, text)
 
         return break_flag, continue_flag, outside, cmd
+
+    def handle_scripting(self, text):
+        """ handles building a script """
+        if self.script is None:  # start script capturing
+            if len(text) > 1:
+                self.script_name = text[1]
+            self.script = []
+            print('Starting Scripting', file=self.output)
+        else:  # end script capturing
+            script_path = azclishell.configuration.SCRIPT_PATH
+            name = self.script_name if self.script_name else str(datetime.datetime.now())
+            if not os.path.exists(script_path):
+                os.makedirs(script_path)
+            with open(os.path.join(script_path, name), 'w') as script_path:
+                script_path.write(self.script)
 
     def handle_jmespath_query(self, text, continue_flag):
         if self.last and self.last.result:
