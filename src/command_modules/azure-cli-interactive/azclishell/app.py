@@ -480,6 +480,7 @@ class Shell(object):
 
     def handle_scripting(self, text):
         """ handles building a script """
+        print("this is")
         if self.script is None:  # start script capturing
             if len(text) > 1:
                 self.script_name = text[1]
