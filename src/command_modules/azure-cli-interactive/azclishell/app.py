@@ -419,24 +419,28 @@ class Shell(object):
     def _special_cases(self, text, cmd, outside):
         break_flag = False
         continue_flag = False
+        script_len = len(SELECT_SYMBOL['script'])
+        text_split = text.split()
+        text_strip = text.strip()
 
-        if text and len(text.split()) > 0 and text.split()[0].lower() == 'az':
+        if text and len(text_split) > 0 and text_split[0].lower() == 'az':
             telemetry.track_ssg('az', text)
             cmd = ' '.join(text.split()[1:])
         if self.default_command:
             cmd = self.default_command + " " + cmd
 
-        if text.strip() == "quit" or text.strip() == "exit":
+        if text_strip == "quit" or text_strip == "exit":
             break_flag = True
-        elif text.strip() == "clear-history":  # clears the history, but only when you restart
+        elif text_strip == "clear-history":  # clears the history, but only when you restart
             outside = True
             cmd = 'echo -n "" >' +\
                 os.path.join(
                     SHELL_CONFIG_DIR(),
                     SHELL_CONFIGURATION.get_history())
-        elif text.strip() == CLEAR_WORD:
+        elif text_strip == CLEAR_WORD:
             outside = True
             cmd = CLEAR_WORD
+
         if text:
             if text[0] == SELECT_SYMBOL['outside']:
                 cmd = text[1:]
@@ -453,9 +457,9 @@ class Shell(object):
                 continue_flag = True
                 telemetry.track_ssg('exit code', '')
 
-            elif text[0] == SELECT_SYMBOL['script']:
+            elif text_split[0] == SELECT_SYMBOL['script']:
                 telemetry.track_ssg('script', '')
-                self.handle_scripting(text)
+                self.handle_scripting(text_split)
                 continue_flag = True
 
             elif text[0] == SELECT_SYMBOL['query']:  # query previous output
@@ -478,21 +482,21 @@ class Shell(object):
 
         return break_flag, continue_flag, outside, cmd
 
-    def handle_scripting(self, text):
+    def handle_scripting(self, text_split):
         """ handles building a script """
-        print("this is")
         if self.script is None:  # start script capturing
-            if len(text) > 1:
-                self.script_name = text[1]
+            self.script_name = text_split[1] if len(text_split) > 1 else str(datetime.datetime.now())
             self.script = []
-            print('Starting Scripting', file=self.output)
-        else:  # end script capturing
+            print('Starting Scripting {}'.format(self.script_name), file=self.output)
+        else:
             script_path = azclishell.configuration.SCRIPT_PATH
-            name = self.script_name if self.script_name else str(datetime.datetime.now())
             if not os.path.exists(script_path):
                 os.makedirs(script_path)
-            with open(os.path.join(script_path, name), 'w') as script_path:
-                script_path.write(self.script)
+            with open(os.path.join(script_path, self.script_name), 'w') as script_path:
+                script_path.write(' '.join(self.script))
+            self.script = None
+            self.script_name = None
+            print('Ending Scripting', file=self.output)
 
     def handle_jmespath_query(self, text, continue_flag):
         if self.last and self.last.result:
@@ -652,6 +656,9 @@ class Shell(object):
                     break
                 else:
                     b_flag, c_flag, outside, cmd = self._special_cases(text, cmd, outside)
+
+                    if self.script is not None and not c_flag and not b_flag:
+                        self.script.append('az ' + cmd + '\n')
 
                     if not self.default_command:
                         self.history.append(text)
