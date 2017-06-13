@@ -4,7 +4,15 @@
 # --------------------------------------------------------------------------------------------
 
 import unittest
+import six
+from azclishell.util import parse_quotes
+from azclishell.gather_commands import GatherCommands
 
+def pass_gather(_):
+    pass
+
+
+GatherCommands.gather_from_files = pass_gather
 
 class ScriptBuildingTest(unittest.TestCase):
 
