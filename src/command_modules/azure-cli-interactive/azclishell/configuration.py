@@ -30,7 +30,7 @@ GESTURE_INFO = {
     SELECT_SYMBOL['scope'] + ' ' + SELECT_SYMBOL['unscope']: "go back a scope",
     "Ctrl+N": "Scroll down the documentation",
     "Ctrl+Y": "Scroll up the documentation",
-    SELECT_SYMBOL['script'] + "[name]": "start/end scripting mode"
+    SELECT_SYMBOL['script'] + " [name]": "start/end script building"
 }
 
 CONFIG_FILE_NAME = 'shell-config'

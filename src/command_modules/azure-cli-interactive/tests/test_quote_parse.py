@@ -3,9 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-import six
-from azclishell.util import parse_quotes
 import unittest
+from azclishell.util import parse_quotes
 
 
 class ParseTest(unittest.TestCase):
